@@ -1,117 +1,119 @@
-#include <unistd.h> 
+#include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h> 
 
 void my_putchar(char c)
 {
   write(1, &c, 1);
 }
 
-void put_space(int n)
+int get_base(int size)
 {
-  int i = 0;
-  while (i < n)
-  {
-   my_putchar('0');
-   i++;
-  }
+  int base = 7;
+  int lines = 4;
+  int stair = 2;
+  int i = 1;
+
+  while (i < size)
+    {
+      if (stair % 2 == 0)
+	base = base + lines + 2;
+      if (stair % 2 != 0)
+	base = base + lines + 3;
+      i++;
+      lines++;
+      stair++;
+    }
+  return base;
 }
 
-void put_star(int n)
+void trunk(int size)
 {
-  int i = 0;
-  while (i < n)
-  {
-    my_putchar('*');
-    i++;
-  }
-}
+  int i, j, base, space;
 
-void new_line(int n)
-{
-  int i = 0;
-  while (i < n)
-  {
+  j = 0;
+  base = get_base(size);
+  space = (base - size) / 2;
+
+  while (j < size)
+    {
+      	if(size % 2 == 0)
+	{
+	  for (i = 0; i < space; i++)
+	      my_putchar(' ');
+	  for (i = 0; i < size + 1; i++)
+	      my_putchar('|');
+	}
+	if(size % 2 != 0)
+	{
+	  for (i = 0; i < space; i++)
+	      my_putchar(' ');
+	  for (i = 0; i < size; i++)
+	      my_putchar('|');
+	}
+    j++;
     my_putchar('\n');
-    i++;
-  }
-}
-
-int nb_lignes(int size)
-{
-  int start = 4;
-  if (size > 1)
-    start = start + size;
-  return start;
-}
-
-
-int stars_base(int size)
-{
-  int start = 7;
-  int residu = 6;
-  int count = 1;
-  
-  start = start + 8;
-}
-
-void sapin_level1(size)
-{
-  int space = 3; 
-  int star = 1;
-  int count = 4;
-  
-  while (count != 0)
-  {
-    put_space(space);
-    put_star(star);
-    new_line(1);
-    count--;
-    space--;
-    star = star + 2;
-  }
-}
-
-void sapin_leveln(int start)
-{
-  int space, star, stair;
-  space = 0;
-  stair = start + 3;
-  star = (stair * start) - 1; 
-  while (start != 1)
-    {
-      put_space(space);
-      put_star(star);
-      new_line(1);
-      star = star - 2;
-      space++;
-      start--;
-      sapin_leveln(start);
     }
 }
-
-void sapin(int size)
+ 
+void	sapin(int size)
 {
-  if (size == 1)
-    sapin_level1();
-  else
+  int space, stars, stair, lines, i;
+
+  stars = 1;
+  stair = 2;
+  lines = 4;
+
+  space = get_base(size) / 2;
+
+  while (lines > 0)
     {
-      sapin_level1();
-      sapin_leveln(size);
+      for (i = 0; i < space ; i++)
+	  my_putchar(' ');
+      for (i = 0; i < stars ; i++)
+	  my_putchar('*');
+      my_putchar('\n');
+      space--;
+      lines--;
+      stars = stars + 2;
     }
+   space++;
+    
+   while (stair <= size)
+    {
+	lines = stair + 3;
+	stars = stars - 2 - 2*(stair/2);
+	space = space + (stair/2);
+	while (lines > 0)
+	  {
+	    for (i = 0 ; i < space ; i++)
+		my_putchar(' ');
+	    for(i = 0 ; i < stars ; i++)
+		my_putchar('*');
+	    my_putchar('\n');
+	    space--;
+	    lines--;
+	    stars = stars + 2;
+	  }
+        stair++;
+	space++;
+     }
+
+   trunk(size);    
 }
 
 int main(int argc, char **argv)
 {
   int nb;
-  
-  sapin(3);
+
+  if (argc != 2)
+    return (1);
   
   nb = atoi(argv[1]);
 
-  if (nb <= 0)
+  if (nb <= 0 || nb >= 43)
     return (1);
-  if (argc != 2)
-  return (1);
-  
+
+  sapin(nb);
   return (0);
 }
